@@ -1,0 +1,8 @@
+src/
+*.log
+.DS_Store
+tsconfig.json
+eslint.config.mjs
+.prettierrc
+.prettierignore
+.gitignore
