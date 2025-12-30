@@ -10,16 +10,16 @@ import { TelegramError } from "./errors";
 
 export class TelegramClient {
   private readonly botToken: string;
-  private readonly logger?: TelegramClientConfig["logger"];
-  private readonly metrics?: TelegramClientConfig["metrics"];
+  private readonly loggerFunction?: TelegramClientConfig["loggerFunction"];
+  private readonly putMetricFunction?: TelegramClientConfig["putMetricFunction"];
   private readonly enabledMetrics?: Set<string>;
   private readonly timeoutMs: number;
   private readonly baseUrl: string;
 
   constructor(config: TelegramClientConfig) {
     this.botToken = config.botToken;
-    this.logger = config.logger;
-    this.metrics = config.metrics;
+    this.loggerFunction = config.loggerFunction;
+    this.putMetricFunction = config.putMetricFunction;
     this.enabledMetrics = config.enabledMetrics
       ? new Set(config.enabledMetrics)
       : undefined;
@@ -28,7 +28,7 @@ export class TelegramClient {
   }
 
   private async putMetric({ name, value, unit }: PutMetricInput) {
-    if (!this.metrics) return;
+    if (!this.putMetricFunction) return;
     if (
       this.enabledMetrics &&
       !this.enabledMetrics.has("*") &&
@@ -36,14 +36,14 @@ export class TelegramClient {
     )
       return;
 
-    await this.metrics.putMetric({ name, value, unit });
+    await this.putMetricFunction({ name, value, unit });
   }
 
   public async send(command: SendMessageCommand): Promise<SendMessageOutput> {
     const startTime = Date.now();
 
     try {
-      this.logger?.({
+      this.loggerFunction?.({
         level: "info",
         message: "Sending Telegram message",
         meta: {
@@ -74,7 +74,7 @@ export class TelegramClient {
 
       const duration = Date.now() - startTime;
 
-      this.logger?.({
+      this.loggerFunction?.({
         level: "info",
         message: "Telegram message sent successfully",
         meta: { messageId: response.data.result!.messageId, duration },
@@ -92,7 +92,7 @@ export class TelegramClient {
       const duration = Date.now() - startTime;
 
       if (error instanceof TelegramError) {
-        this.logger?.({
+        this.loggerFunction?.({
           level: "error",
           message: "Telegram API error",
           meta: {
@@ -103,7 +103,7 @@ export class TelegramClient {
           },
         });
       } else if (error instanceof AxiosError) {
-        this.logger?.({
+        this.loggerFunction?.({
           level: "error",
           message: "Network error sending Telegram message",
           meta: {
@@ -113,7 +113,7 @@ export class TelegramClient {
           },
         });
       } else {
-        this.logger?.({
+        this.loggerFunction?.({
           level: "error",
           message: "Unexpected error sending Telegram message",
           meta: { error: String(error), duration },

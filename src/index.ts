@@ -2,8 +2,8 @@ export { TelegramClient } from "./client";
 export { SendMessageCommand } from "./commands";
 export { TelegramError } from "./errors";
 export type {
-  Logger,
-  MetricsCollector,
+  LoggerFunction,
+  PutMetricFunction,
   TelegramClientConfig,
   SupportedTelegramMetric,
   SupportedMetricUnit,

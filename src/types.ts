@@ -1,6 +1,6 @@
 export type SupportedMetricUnit = "Count" | "Seconds" | "Milliseconds";
 
-export interface Logger {
+export interface LoggerFunction {
   (params: {
     level: "error" | "warn" | "info" | "debug";
     message: string;
@@ -9,8 +9,8 @@ export interface Logger {
   }): void;
 }
 
-export interface MetricsCollector {
-  putMetric(params: {
+export interface PutMetricFunction {
+  (params: {
     name: string;
     value: number;
     unit?: SupportedMetricUnit;
@@ -31,8 +31,8 @@ export interface PutMetricInput {
 
 export interface TelegramClientConfig {
   botToken: string;
-  logger?: Logger;
-  metrics?: MetricsCollector;
+  loggerFunction?: LoggerFunction;
+  putMetricFunction?: PutMetricFunction;
   enabledMetrics?: SupportedTelegramMetric[];
   timeoutMs?: number;
 }

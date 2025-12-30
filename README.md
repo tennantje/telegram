@@ -81,25 +81,25 @@ const telegramConfig = await getTelegramConfig();
 // Setup CloudWatch metrics
 const cloudwatch = new CloudWatchClient({});
 
+const putMetricFunction = async ({ name, value, unit = "Count" }) => {
+  await cloudwatch.send(
+    new PutMetricDataCommand({
+      Namespace: "MyApp/Telegram",
+      MetricData: [
+        {
+          MetricName: name,
+          Value: value,
+          Unit: unit,
+        },
+      ],
+    }),
+  );
+};
+
 const client = new TelegramClient({
   botToken: telegramConfig.botToken,
-  logger,
-  metrics: {
-    async putMetric({ name, value, unit = "Count" }) {
-      await cloudwatch.send(
-        new PutMetricDataCommand({
-          Namespace: "MyApp/Telegram",
-          MetricData: [
-            {
-              MetricName: name,
-              Value: value,
-              Unit: unit,
-            },
-          ],
-        }),
-      );
-    },
-  },
+  loggerFunction: logger,
+  putMetricFunction,
   enabledMetrics: ["TelegramSuccess", "TelegramFailure"], // Only track success/failure, not duration
   timeoutMs: 10000, // 10 second timeout
 });
@@ -152,8 +152,8 @@ try {
 ```typescript
 interface TelegramClientConfig {
   botToken: string; // Required: Your bot token from @BotFather
-  logger?: Logger; // Optional: Structured logger function
-  metrics?: MetricsCollector; // Optional: Metrics collection function
+  loggerFunction?: LoggerFunction; // Optional: Structured logger function
+  putMetricFunction?: PutMetricFunction; // Optional: Metrics collection function
   enabledMetrics?: SupportedTelegramMetric[]; // Optional: Metric allowlist (['*'] for all)
   timeoutMs?: number; // Optional: Request timeout (default: 5000ms)
 }
