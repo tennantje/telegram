@@ -1,6 +1,6 @@
 {
   "name": "@tennantje/telegram",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "A TypeScript Telegram Bot API client with AWS SDK-style architecture.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
