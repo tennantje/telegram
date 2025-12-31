@@ -6,6 +6,13 @@ export class SendMessageCommand {
   constructor(input: SendMessageInput) {
     this.input = input;
   }
+
+  public getPayload() {
+    return {
+      chat_id: this.input.chatId,
+      text: this.input.text,
+    };
+  }
 }
 
 export class SendMarkdownMessageCommand {
@@ -13,5 +20,13 @@ export class SendMarkdownMessageCommand {
 
   constructor(input: SendMarkdownMessageInput) {
     this.input = input;
+  }
+
+  public getPayload() {
+    return {
+      chat_id: this.input.chatId,
+      text: this.input.text,
+      parse_mode: "MarkdownV2" as const,
+    };
   }
 }
