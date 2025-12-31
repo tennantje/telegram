@@ -42,6 +42,11 @@ export interface SendMessageInput {
   text: string;
 }
 
+export interface SendMarkdownMessageInput {
+  chatId: string;
+  text: string;
+}
+
 export interface SendMessageOutput {
   messageId: number;
   date: number;
