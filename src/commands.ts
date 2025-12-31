@@ -15,6 +15,10 @@ export class SendMessageCommand {
   }
 }
 
+const escapeMarkdownV2 = (text: string): string => {
+  return text.replace(/[_*[\]()~`>#+=|{}.!-]/g, '\\$&');
+};
+
 export class SendMarkdownMessageCommand {
   public readonly input: SendMarkdownMessageInput;
 
@@ -25,7 +29,7 @@ export class SendMarkdownMessageCommand {
   public getPayload() {
     return {
       chat_id: this.input.chatId,
-      text: this.input.text,
+      text: escapeMarkdownV2(this.input.text),
       parse_mode: "MarkdownV2" as const,
     };
   }
